@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage ("clean workspace") {
             steps {
-                cleanWs()
+                deleteDir()
             }
         }
         stage ("Git Checkout") {
