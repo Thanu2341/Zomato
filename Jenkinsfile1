@@ -33,17 +33,19 @@ pipeline {
         stage('Terraform Deploy') {
     steps {
         withCredentials([file(credentialsId: 'thetfkey', variable: 'TF_KEY')]) {
-            dir('terraformfiles') {
-                sh '''
-                    cp "$TF_KEY" thetfkey.pem
-                    chmod 600 thetfkey.pem
+            sh '''
+                cd terraformfiles
 
-                    terraform init
-                    terraform validate
-                    terraform plan -out=tfplan
-                    terraform apply -auto-approve tfplan
-                '''
-            }
+                # Copy key from Jenkins credentials to Terraform folder
+                cp "$TF_KEY" thetfkey.pem
+
+                chmod 600 thetfkey.pem
+
+                terraform init
+                terraform validate
+                terraform plan -out=tfplan
+                terraform apply -auto-approve tfplan
+            '''
         }
     }
 }
