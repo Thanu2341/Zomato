@@ -30,15 +30,20 @@ pipeline {
                 }
             }
         }
-        stage('config & Deployment') {
-            steps {
-                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'awslogin', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                dir('terraformfiles') {
-                sh 'chmod 600 thetfkey.pem'
-                sh 'terraform init'
-                sh 'terraform validate'
-                sh 'terraform apply --autp-approve'
-                }
+        stage('Terraform Deploy') {
+    steps {
+        withCredentials([file(credentialsId: 'thetfkey', variable: 'TF_KEY')]) {
+            dir('terraformfiles') {
+                sh '''
+                    cp "$TF_KEY" thetfkey.pem
+                    chmod 600 thetfkey.pem
+
+                    terraform init
+                    terraform validate
+                    terraform plan -out=tfplan
+                    terraform apply -auto-approve tfplan
+                '''
+            }
         }
     }
 }
