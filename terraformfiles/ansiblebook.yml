@@ -1,16 +1,14 @@
-- name : configure Docker on EC2 Instances
-  hosts : all
-  become : true
-  connection : ssh
-  tasks :
-  - name : updating apt
-    command : sudo yum update
+---
+- name: Configure EC2 Instance
+  hosts: all
+  become: yes
 
-  - name : Install Docker
-   command : sudo yum install docker -y
+  tasks:
+    - name: Install Docker
+      command: sudo yum install docker -y
 
-  - name : Start Docker services
-    command : sudo systemctl start docker
+    - name: Start Docker
+      command: sudo systemctl start docker
 
-  - name : Deploy Docker container
-    command : docker run -itd -p 8084:8081 thanu5/zomatoapp:1.0
+    - name: Enable Docker on boot
+      command: sudo systemctl enable docker
