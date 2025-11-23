@@ -20,5 +20,15 @@ pipeline {
                 sh "docker build -t thanu5/zomatoapp:1.0 ."
             }
         }
+        stage ("Tag & Push to DockerHub") {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-login', passwordVariable: 'dockerhubpass', usernameVariable: 'dockerhublogin')]) {
+                        sh 'docker login -u ${dockerhublogin} -p ${dockerhubpass}'
+                        sh "docker push thanu5/zomatoapp:1.0"
+                    }
+                }
+            }
+        }
     }
 }
